@@ -1,6 +1,6 @@
 import os
 
-from userge import userge, Message, Config, logging
+from userge import userge, Message, config, logging
 from userge.utils import get_import_path
 from userge.plugins import ROOT
 

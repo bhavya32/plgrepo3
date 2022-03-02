@@ -1,13 +1,25 @@
 import os
-
+from os.path import isfile, relpath
+from glob import glob
 from userge import userge, Message, config, logging
-from userge.utils import get_import_path
 from userge.plugins import ROOT
 
 PLUGINS_CHAT_ID = int(os.environ.get("PLUGINS_CHAT_ID", 0))
 _CHANNEL = userge.getCLogger(__name__)
 _LOG = logging.getLogger(__name__)
 
+def get_import_path(root: str, path: str) -> Union[str, List[str]]:
+    """ return import path """
+    seperator = '\\' if '\\' in root else '/'
+    if isfile(path):
+        return '.'.join(relpath(path, root).split(seperator))[:-3]
+    all_paths = glob(root + path.rstrip(seperator) + f"{seperator}*.py", recursive=True)
+    return sorted(
+        [
+            '.'.join(relpath(f, root).split(seperator))[:-3] for f in all_paths
+            if not f.endswith("__init__.py")
+        ]
+    )
 
 @userge.on_cmd(
     'loadall', about={
